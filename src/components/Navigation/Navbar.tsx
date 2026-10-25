@@ -24,7 +24,6 @@ interface NavbarProps {
   onOpenExportModal: () => void;
   isLiveAI: boolean;
   aiProvider: string;
-  onSaveApiKey?: (key: string) => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -37,12 +36,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenExportModal,
   isLiveAI,
   aiProvider,
-  onSaveApiKey,
 }) => {
   const [showPlanMenu, setShowPlanMenu] = useState(false);
   const [showAiModal, setShowAiModal] = useState(false);
-  const [apiKeyInput, setApiKeyInput] = useState(() => localStorage.getItem('gemini_custom_api_key') || '');
-  const [keySavedMessage, setKeySavedMessage] = useState(false);
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: Calendar },
@@ -228,51 +224,24 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             </div>
 
-            <div className="text-xs text-slate-600 space-y-2.5 bg-slate-50 p-3.5 rounded-xl border border-slate-200/80">
-              <p>
-                <strong className="text-slate-800">Current Provider:</strong>{' '}
-                <span className="font-mono bg-white px-1.5 py-0.5 rounded border border-slate-200">
+            <div className="text-xs text-slate-600 space-y-2.5 bg-slate-50 p-4 rounded-xl border border-slate-200/80">
+              <div className="flex items-center justify-between">
+                <span className="text-slate-500 font-medium">Engine Provider:</span>
+                <span className="font-mono bg-white px-2 py-0.5 rounded border border-slate-200 font-bold text-slate-800">
                   {aiProvider}
                 </span>
-              </p>
-              <p>
-                <strong className="text-slate-800">Deployment Status:</strong>{' '}
-                <span className="font-semibold text-indigo-700">
-                  {isLiveAI ? 'Live Gemini AI Active' : 'Deterministic Engine (Demo Mode)'}
-                </span>
-              </p>
-              <div className="pt-2 border-t border-slate-200 space-y-2">
-                <label className="block text-[11px] font-bold text-slate-700">
-                  Configure Google Gemini API Key (Optional / Deploy on Render):
-                </label>
-                <div className="flex space-x-1.5">
-                  <input
-                    type="password"
-                    value={apiKeyInput}
-                    onChange={(e) => setApiKeyInput(e.target.value)}
-                    placeholder="AIzaSy... (Paste Gemini API Key)"
-                    className="flex-1 px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-600 font-mono"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      localStorage.setItem('gemini_custom_api_key', apiKeyInput.trim());
-                      if (onSaveApiKey) onSaveApiKey(apiKeyInput.trim());
-                      setKeySavedMessage(true);
-                      setTimeout(() => setKeySavedMessage(false), 2500);
-                    }}
-                    className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg text-xs"
-                  >
-                    Save Key
-                  </button>
-                </div>
-                {keySavedMessage && (
-                  <p className="text-[11px] text-emerald-600 font-bold">✓ Key saved to browser!</p>
-                )}
-                <p className="text-[10px] text-slate-400 leading-tight">
-                  For Render deployment: Set <code className="bg-slate-200 px-1 py-0.2 rounded font-mono">GEMINI_API_KEY</code> in Render's Environment Variables dashboard.
-                </p>
               </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-500 font-medium">Environment Status:</span>
+                <span className={`font-bold ${isLiveAI ? 'text-emerald-700' : 'text-amber-700'}`}>
+                  {isLiveAI ? '● Live AI Connected (Render Env)' : '● Deterministic Demo Mode'}
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-500 pt-2 border-t border-slate-200 leading-relaxed">
+                {isLiveAI
+                  ? 'Your Gemini API key is securely loaded from Render environment variables. Credentials remain strictly on the backend server.'
+                  : 'Running in deterministic calculation mode. Add GEMINI_API_KEY in Render dashboard to switch to live AI.'}
+              </p>
             </div>
 
             <div className="flex justify-end">

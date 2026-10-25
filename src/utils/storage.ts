@@ -6,7 +6,7 @@ import { generateDemoVendors } from './vendorEngine';
 import { calculatePlanCompleteness, generateRecommendations } from './completenessEngine';
 import { generateDefaultChecklists } from './exportUtils';
 
-const STORAGE_KEY = 'eventwise_saved_plans_v1';
+const STORAGE_KEY = 'eventwise_saved_plans_v2';
 const ACTIVE_PLAN_KEY = 'eventwise_active_plan_id';
 
 /**
@@ -74,58 +74,10 @@ export function createPlanFromRequirements(
 }
 
 /**
- * Pre-seeded sample plans for immediate review and demonstration
+ * Pre-seeded sample plan: Single realistic example for immediate exploration
  */
 export function getSamplePlans(): EventPlan[] {
-  // Sample 1: 21st Birthday Party
-  const bdayReq: EventRequirements = {
-    id: 'plan-sample-birthday',
-    title: 'Maya’s 21st Rooftop Neon Birthday',
-    eventType: 'birthday',
-    date: '2026-11-14',
-    startTime: '18:00',
-    durationHours: 5,
-    guestCount: 45,
-    totalBudget: 3500,
-    currency: 'USD',
-    location: 'Downtown Brooklyn Loft',
-    theme: 'Cyberpunk Neon Glow & Mocktail Lounge',
-    venueType: 'indoor',
-    venueName: 'The Skyline Loft',
-    dietaryRequirements: ['Vegetarian', 'Gluten-Free', 'Nut Allergy'],
-    accessibilityRequirements: ['Wheelchair access'],
-    mustHaveActivities: ['Glow Photobooth', 'Signature Cake Moment', 'DJ Dance Floor'],
-    optionalFeatures: ['Custom Cocktail Stirrers', 'Late Night Taco Station'],
-    priority: 'balanced',
-    riskTolerance: 'moderate',
-    contingencyPercentage: 12,
-  };
-
-  // Sample 2: University Tech & Cultural Fest
-  const festReq: EventRequirements = {
-    id: 'plan-sample-fest',
-    title: 'InnovateX 2026: Campus Tech & Cultural Fest',
-    eventType: 'college_festival',
-    date: '2026-12-05',
-    startTime: '10:00',
-    durationHours: 8,
-    guestCount: 350,
-    totalBudget: 15000,
-    currency: 'USD',
-    location: 'North Campus Quad & Auditorium',
-    theme: 'Future Horizons & Electro-Acoustic Beats',
-    venueType: 'hybrid',
-    venueName: 'University Central Grounds',
-    dietaryRequirements: ['Halal', 'Vegetarian', 'Vegan'],
-    accessibilityRequirements: ['Wheelchair ramps', 'ASL Interpreter for Keynote'],
-    mustHaveActivities: ['Robotics Showcase', 'Battle of the Bands', 'Food Truck Alley'],
-    optionalFeatures: ['Drone Light Show', 'Merch Booths'],
-    priority: 'experience_first',
-    riskTolerance: 'conservative',
-    contingencyPercentage: 15,
-  };
-
-  // Sample 3: Grand Wedding & Reception Gala
+  // Single Polished Example: Grand Wedding & Reception Gala
   const weddingReq: EventRequirements = {
     id: 'plan-sample-wedding',
     title: 'Arjun & Priya’s Grand Wedding & Reception Gala',
@@ -149,11 +101,7 @@ export function getSamplePlans(): EventPlan[] {
     contingencyPercentage: 12,
   };
 
-  return [
-    createPlanFromRequirements(bdayReq),
-    createPlanFromRequirements(festReq),
-    createPlanFromRequirements(weddingReq),
-  ];
+  return [createPlanFromRequirements(weddingReq)];
 }
 
 export function loadSavedPlans(): EventPlan[] {
