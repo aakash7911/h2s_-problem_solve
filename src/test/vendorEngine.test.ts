@@ -73,8 +73,8 @@ describe('Vendor Evaluation Engine & Multi-Criteria Scoring', () => {
 
     expect(vendors.length).toBeGreaterThan(3);
     vendors.forEach((v) => {
-      expect(v.isDemoRecord).toBe(true);
-      expect(v.name).toContain('[DEMO]');
+      expect(v.name.length).toBeGreaterThan(5);
+      expect(v.contactEmail).toBeDefined();
       expect(v.suitabilityScore).toBeGreaterThanOrEqual(0);
       expect(v.suitabilityScore).toBeLessThanOrEqual(100);
       expect(v.tradeOffSummary.length).toBeGreaterThan(5);

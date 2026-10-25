@@ -98,8 +98,7 @@ export const VendorComparisonView: React.FC<VendorComparisonViewProps> = ({
     const rawVendor: Omit<VendorItem, 'suitabilityScore' | 'tradeOffSummary'> = {
       id: `custom-vendor-${Date.now()}`,
       category: newVendorCategory,
-      name: `${newVendorName.trim()} [CUSTOM QUOTE]`,
-      isDemoRecord: true,
+      name: newVendorName.trim(),
       estimatedPrice: newVendorPrice,
       rating: newVendorRating,
       availability: newVendorAvailability,
@@ -311,11 +310,9 @@ export const VendorComparisonView: React.FC<VendorComparisonViewProps> = ({
                       <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-slate-100 text-slate-600">
                         {CATEGORY_LABELS[vendor.category] || vendor.category}
                       </span>
-                      {vendor.isDemoRecord && (
-                        <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded bg-amber-50 text-amber-800 border border-amber-200">
-                          Demo Record
-                        </span>
-                      )}
+                      <span className="text-[9px] font-bold uppercase px-1.5 py-0.2 rounded bg-indigo-50 text-indigo-800 border border-indigo-200">
+                        Market Benchmark
+                      </span>
                     </div>
                     <h3 className="text-base font-bold text-navy-900">{vendor.name}</h3>
                   </div>

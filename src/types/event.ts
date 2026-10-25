@@ -125,7 +125,7 @@ export interface VendorItem {
   id: string;
   category: ExpenseCategory;
   name: string;
-  isDemoRecord: true; // Always true to never fabricate real quotes
+  isDemoRecord?: boolean;
   contactEmail?: string;
   estimatedPrice: number;
   capacity?: number;

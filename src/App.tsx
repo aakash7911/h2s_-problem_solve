@@ -43,18 +43,24 @@ export const App: React.FC = () => {
       setActivePlanId(loaded[0].id);
     }
 
-    // Check backend health
-    fetch('/api/health')
-      .then((res) => res.json())
-      .then((data) => {
-        setIsLiveAI(data.mode === 'live_ai');
-        setAiProvider(data.provider || 'deterministic_engine');
-      })
-      .catch(() => {
-        // Standalone client mode fallback
-        setIsLiveAI(false);
-        setAiProvider('client_deterministic_engine');
-      });
+    const checkHealth = () => {
+      const storedKey = localStorage.getItem('gemini_custom_api_key') || '';
+      const headers: Record<string, string> = {};
+      if (storedKey) headers['x-gemini-api-key'] = storedKey;
+
+      fetch('/api/health', { headers })
+        .then((res) => res.json())
+        .then((data) => {
+          setIsLiveAI(data.mode === 'live_ai');
+          setAiProvider(data.provider || 'deterministic_engine');
+        })
+        .catch(() => {
+          setIsLiveAI(false);
+          setAiProvider('client_deterministic_engine');
+        });
+    };
+
+    checkHealth();
   }, []);
 
   const activePlan = plans.find((p) => p.id === activePlanId) || plans[0];
@@ -103,10 +109,14 @@ export const App: React.FC = () => {
   const handleCreatePlanFromWizard = async (requirements: EventRequirements) => {
     setIsGenerating(true);
     try {
+      const storedKey = localStorage.getItem('gemini_custom_api_key') || '';
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (storedKey) headers['x-gemini-api-key'] = storedKey;
+
       // Attempt backend AI endpoint
       const response = await fetch('/api/generate-plan', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify(requirements),
       });
 
@@ -166,6 +176,12 @@ export const App: React.FC = () => {
           onOpenExportModal={() => setIsExportOpen(true)}
           isLiveAI={isLiveAI}
           aiProvider={aiProvider}
+          onSaveApiKey={(key) => {
+            if (key) {
+              setIsLiveAI(true);
+              setAiProvider('gemini');
+            }
+          }}
         />
       </div>
 

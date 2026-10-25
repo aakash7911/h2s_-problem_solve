@@ -74,15 +74,17 @@ if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_gemini_ap
 /**
  * Health check endpoint indicating AI status and execution mode
  */
-app.get('/api/health', (_req: Request, res: Response) => {
-  const isAIConfigured = aiAdapter.isConfigured();
+app.get('/api/health', (req: Request, res: Response) => {
+  const clientKey = (req.headers['x-gemini-api-key'] as string) || '';
+  const effectiveAdapter = clientKey && clientKey.trim().length > 5 ? new GeminiAdapter(clientKey.trim()) : aiAdapter;
+  const isAIConfigured = effectiveAdapter.isConfigured();
   res.json({
     status: 'ok',
     mode: isAIConfigured ? 'live_ai' : 'demo_mode',
-    provider: aiAdapter.getProviderName(),
+    provider: effectiveAdapter.getProviderName(),
     aiConfigured: isAIConfigured,
     message: isAIConfigured
-      ? 'Connected to live AI provider'
+      ? 'Connected to live AI provider (Google Gemini)'
       : 'Running in DEMO MODE with deterministic event planning engine',
     timestamp: new Date().toISOString(),
   });
@@ -94,6 +96,7 @@ app.get('/api/health', (_req: Request, res: Response) => {
 app.post('/api/generate-plan', async (req: Request, res: Response) => {
   try {
     const requirements: EventRequirements = req.body;
+    const clientKey = (req.headers['x-gemini-api-key'] as string) || '';
 
     // Strict Input Validation
     if (!requirements || typeof requirements !== 'object') {
@@ -112,8 +115,13 @@ app.post('/api/generate-plan', async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Invalid field: totalBudget must be greater than 0' });
     }
 
+    // Determine which adapter to run
+    const effectiveAdapter = clientKey && clientKey.trim().length > 5
+      ? new GeminiAdapter(clientKey.trim())
+      : aiAdapter;
+
     // 1. Get creative rationale and recommendations from AI Adapter (or deterministic engine)
-    const aiResult = await aiAdapter.generatePlanCreative(requirements);
+    const aiResult = await effectiveAdapter.generatePlanCreative(requirements);
 
     // 2. Compute deterministic budget
     const defaultExpenses = generateDefaultExpenses(requirements);

@@ -125,7 +125,35 @@ export function getSamplePlans(): EventPlan[] {
     contingencyPercentage: 15,
   };
 
-  return [createPlanFromRequirements(bdayReq), createPlanFromRequirements(festReq)];
+  // Sample 3: Grand Wedding & Reception Gala
+  const weddingReq: EventRequirements = {
+    id: 'plan-sample-wedding',
+    title: 'Arjun & Priya’s Grand Wedding & Reception Gala',
+    eventType: 'wedding',
+    date: '2026-11-28',
+    startTime: '17:00',
+    durationHours: 6,
+    guestCount: 180,
+    totalBudget: 22000,
+    currency: 'USD',
+    location: 'Grand Botanical Conservatory, Seattle, WA',
+    theme: 'Royal Emerald & Velvet Gold Elegance',
+    venueType: 'indoor',
+    venueName: 'The Conservatory Grand Ballroom',
+    dietaryRequirements: ['Vegetarian', 'Jain Option', 'Gluten-Free', 'Nut Allergy Safe'],
+    accessibilityRequirements: ['Step-Free / Wheelchair Ramps', 'Designated Accessible Parking'],
+    mustHaveActivities: ['Traditional Ceremony', 'Sangeet Choreography', 'Royal Banquet Dinner', 'Cake & Champagne Toast'],
+    optionalFeatures: ['Live Sitar Prelude', 'Custom Silk Keepsakes'],
+    priority: 'experience_first',
+    riskTolerance: 'conservative',
+    contingencyPercentage: 12,
+  };
+
+  return [
+    createPlanFromRequirements(bdayReq),
+    createPlanFromRequirements(festReq),
+    createPlanFromRequirements(weddingReq),
+  ];
 }
 
 export function loadSavedPlans(): EventPlan[] {

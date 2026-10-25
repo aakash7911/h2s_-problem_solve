@@ -24,6 +24,7 @@ interface NavbarProps {
   onOpenExportModal: () => void;
   isLiveAI: boolean;
   aiProvider: string;
+  onSaveApiKey?: (key: string) => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -36,9 +37,12 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenExportModal,
   isLiveAI,
   aiProvider,
+  onSaveApiKey,
 }) => {
   const [showPlanMenu, setShowPlanMenu] = useState(false);
   const [showAiModal, setShowAiModal] = useState(false);
+  const [apiKeyInput, setApiKeyInput] = useState(() => localStorage.getItem('gemini_custom_api_key') || '');
+  const [keySavedMessage, setKeySavedMessage] = useState(false);
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: Calendar },
@@ -232,21 +236,43 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </span>
               </p>
               <p>
-                <strong className="text-slate-800">Hybrid Architecture:</strong> All mathematical computations, budget
-                overspending alerts, scheduling conflict checks, and vendor rankings are executed with{' '}
-                <span className="font-semibold text-indigo-700">deterministic algorithms</span>.
+                <strong className="text-slate-800">Deployment Status:</strong>{' '}
+                <span className="font-semibold text-indigo-700">
+                  {isLiveAI ? 'Live Gemini AI Active' : 'Deterministic Engine (Demo Mode)'}
+                </span>
               </p>
-              <p>
-                Generative AI is utilized strictly for natural language theme conceptualization, tone framing, and
-                contextual event recommendations.
-              </p>
-              {!isLiveAI && (
-                <div className="mt-2 p-2.5 bg-amber-50 rounded-lg border border-amber-200 text-amber-900 text-[11px]">
-                  <strong>Demo Mode Note:</strong> To connect Google Gemini, supply a valid{' '}
-                  <code className="font-mono bg-amber-100 px-1 py-0.2 rounded">GEMINI_API_KEY</code> in your environment.
-                  All features, what-if simulators, and budget recalculations function seamlessly in Demo Mode!
+              <div className="pt-2 border-t border-slate-200 space-y-2">
+                <label className="block text-[11px] font-bold text-slate-700">
+                  Configure Google Gemini API Key (Optional / Deploy on Render):
+                </label>
+                <div className="flex space-x-1.5">
+                  <input
+                    type="password"
+                    value={apiKeyInput}
+                    onChange={(e) => setApiKeyInput(e.target.value)}
+                    placeholder="AIzaSy... (Paste Gemini API Key)"
+                    className="flex-1 px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-600 font-mono"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      localStorage.setItem('gemini_custom_api_key', apiKeyInput.trim());
+                      if (onSaveApiKey) onSaveApiKey(apiKeyInput.trim());
+                      setKeySavedMessage(true);
+                      setTimeout(() => setKeySavedMessage(false), 2500);
+                    }}
+                    className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg text-xs"
+                  >
+                    Save Key
+                  </button>
                 </div>
-              )}
+                {keySavedMessage && (
+                  <p className="text-[11px] text-emerald-600 font-bold">✓ Key saved to browser!</p>
+                )}
+                <p className="text-[10px] text-slate-400 leading-tight">
+                  For Render deployment: Set <code className="bg-slate-200 px-1 py-0.2 rounded font-mono">GEMINI_API_KEY</code> in Render's Environment Variables dashboard.
+                </p>
+              </div>
             </div>
 
             <div className="flex justify-end">
