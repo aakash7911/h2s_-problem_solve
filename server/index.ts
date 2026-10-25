@@ -324,8 +324,9 @@ app.get('*', (_req, res) => {
 
 // Start listening
 if (process.env.NODE_ENV !== 'test') {
-  app.listen(PORT, () => {
-    console.log(`EventWise AI server running on http://localhost:${PORT}`);
+  const portNumber = typeof PORT === 'string' ? parseInt(PORT, 10) : PORT;
+  app.listen(portNumber, '0.0.0.0', () => {
+    console.log(`EventWise AI server running on port ${portNumber}`);
     console.log(`Mode: ${aiAdapter.isConfigured() ? 'LIVE AI' : 'DEMO MODE'}`);
   });
 }
